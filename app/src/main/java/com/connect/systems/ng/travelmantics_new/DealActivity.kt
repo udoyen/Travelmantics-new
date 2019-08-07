@@ -10,6 +10,7 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
+import com.google.android.gms.tasks.OnFailureListener
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.StorageReference
@@ -83,6 +84,9 @@ class DealActivity : AppCompatActivity() {
                         Log.d("Name: ", pictureName)
                         showImage(url)
 
+                    }.addOnFailureListener { exception ->
+                        Log.d("UPLOAD", "Error: " + exception.message)
+                        Toast.makeText(this, "File Upload Error!", Toast.LENGTH_LONG).show()
                     }
                 }
 

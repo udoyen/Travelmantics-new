@@ -1,14 +1,18 @@
 package com.connect.systems.ng.travelmantics_new
 
+import com.connect.systems.ng.travelmantics_new.FirebaseUtil.Companion.deals
 
-
+import android.content.Intent
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.OnClickListener
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.database.*
+import com.squareup.picasso.Picasso
 
 class DealAdapter : RecyclerView.Adapter<DealAdapter.DealViewHolder>() {
 
@@ -22,13 +26,14 @@ class DealAdapter : RecyclerView.Adapter<DealAdapter.DealViewHolder>() {
         firebaseDatabase = FirebaseUtil.firebaseDatabase
         databaseReference = FirebaseUtil.databaseReference
         deals = FirebaseUtil.deals!!
+//        context!!.applicationContext
         childEventListener = databaseReference!!.addChildEventListener(object : ChildEventListener{
             override fun onChildChanged(p0: DataSnapshot, p1: String?) {
                 TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
             }
 
             override fun onChildAdded(dataSnapshot: DataSnapshot, p1: String?) {
-                val td = dataSnapshot.getValue(TravelDeal::class.java)
+                val td : TravelDeal? = dataSnapshot.getValue(TravelDeal::class.java)
                 Log.d("Deal: ", td!!.title as String)
                 // set the td object to the firebase
                 // snapshot
@@ -37,15 +42,21 @@ class DealAdapter : RecyclerView.Adapter<DealAdapter.DealViewHolder>() {
                 deals.add(td)
                 notifyItemInserted(deals.size - 1)
 
-//                tvDeals.text = getString(R.string.deal_title, tvDeals.text, td!!.title)
             }
 
-            override fun onChildRemoved(p0: DataSnapshot) {
-                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+            override fun onChildRemoved(dataSnapshot: DataSnapshot) {
+                val td : TravelDeal? = dataSnapshot.getValue(TravelDeal::class.java)
+                Log.d("Deal: ", td!!.title as String)
+                // set the td object to the firebase snapshot
+                td.id = dataSnapshot.key
+                // add to the ArrayList
+                deals.remove(td)
+                notifyItemInserted(deals.size - 1)
             }
 
-            override fun onCancelled(p0: DatabaseError) {
-                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+            override fun onCancelled(dbError: DatabaseError) {
+                Log.d("SignInError", "Database connection cancelled: " + dbError.message)
+//                Toast.makeText(context!!.applicationContext, dbError.message, Toast.LENGTH_LONG).show()
             }
 
             override fun onChildMoved(p0: DataSnapshot, p1: String?) {
@@ -76,11 +87,46 @@ class DealAdapter : RecyclerView.Adapter<DealAdapter.DealViewHolder>() {
         holder.bind(deal)
     }
 
-    class DealViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    class DealViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), OnClickListener {
+
+        init {
+            itemView.setOnClickListener {
+                onClick(it)
+            }
+        }
+
+        override fun onClick(itemView: View?) {
+            val position : Int = adapterPosition
+            Log.d("Click", position.toString())
+            val selectedDeal : TravelDeal = deals!![position]
+            val intent = Intent(itemView!!.context, DealActivity::class.java)
+            intent.putExtra("Deal", selectedDeal)
+            itemView.context.startActivity(intent)
+
+        }
+
         val tvTitle = itemView.findViewById<TextView>(R.id.tvTitle)
+        val tvDescription = itemView.findViewById<TextView>(R.id.tvDescription)
+        val tvPrice = itemView.findViewById<TextView>(R.id.tvPrice)
+        val imageDeal = itemView.findViewById<ImageView>(R.id.imageDeal)
 
         fun bind(deal : TravelDeal) {
             tvTitle.text = deal.title
+            tvDescription.text = deal.description
+            tvPrice.text = deal.price
+            showImage(deal.imageUrl!!)
+
+
+        }
+
+        private fun showImage(url : String) {
+            if (!url.isEmpty()) {
+                val picasso = Picasso.get()
+                picasso.load(url)
+                    .resize(160, 160)
+                    .centerCrop()
+                    .into(imageDeal)
+            }
         }
     }
 
