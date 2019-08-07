@@ -209,6 +209,7 @@ class DealActivity : AppCompatActivity() {
                     Log.d("TAG", ex.toString())
 
                 }
+
         } else {
             databaseReference!!.child(deal!!.id.toString()).setValue(deal)
         }

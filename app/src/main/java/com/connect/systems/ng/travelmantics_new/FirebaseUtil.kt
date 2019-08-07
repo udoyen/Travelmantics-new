@@ -18,6 +18,8 @@ import kotlin.collections.ArrayList
 @SuppressLint("Registered")
 class FirebaseUtil private constructor(){
 
+
+
     companion object {
         private const val RC_SIGN_IN: Int = 200
         var firebaseDatabase: FirebaseDatabase? = null
@@ -29,6 +31,7 @@ class FirebaseUtil private constructor(){
         var childEventListener: ChildEventListener? = null
         var storage : FirebaseStorage? = null
         var storageRef : StorageReference? = null
+        private val className : String = FirebaseUtil::class.java.name
 
 
         fun openFbReference(ref: String) {
@@ -67,15 +70,15 @@ class FirebaseUtil private constructor(){
 
             childEventListener = ref.addChildEventListener(object : ChildEventListener {
                 override fun onCancelled(p0: DatabaseError) {
-                    Log.d("Cancelled", "FirebaseUtil cancel")
+                    Log.d("Cancelled", "FirebaseUtil cancel event: $className")
                 }
 
                 override fun onChildMoved(p0: DataSnapshot, p1: String?) {
-                    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                    Log.d("Moved", "FirebaseUtil Moved Event: $className")
                 }
 
                 override fun onChildChanged(p0: DataSnapshot, p1: String?) {
-                    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                    Log.d("Changed", "FirebaseUtil changed event: $className")
                 }
 
                 override fun onChildAdded(p0: DataSnapshot, p1: String?) {
@@ -85,7 +88,7 @@ class FirebaseUtil private constructor(){
                 }
 
                 override fun onChildRemoved(p0: DataSnapshot) {
-                    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                    Log.d("Removed", "FirebaseUtil Removed event: $className")
                 }
             })
         }

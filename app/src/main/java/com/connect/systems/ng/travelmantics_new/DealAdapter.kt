@@ -1,5 +1,6 @@
 package com.connect.systems.ng.travelmantics_new
 
+import android.content.Context
 import com.connect.systems.ng.travelmantics_new.FirebaseUtil.Companion.deals
 
 import android.content.Intent
@@ -20,8 +21,10 @@ class DealAdapter : RecyclerView.Adapter<DealAdapter.DealViewHolder>() {
     private var firebaseDatabase : FirebaseDatabase? = null
     private var databaseReference : DatabaseReference? = null
     private var childEventListener : ChildEventListener? = null
+    private val className : String = DealAdapter::class.java.name
 
     init {
+
         FirebaseUtil.openFbReference("traveldeals")
         firebaseDatabase = FirebaseUtil.firebaseDatabase
         databaseReference = FirebaseUtil.databaseReference
@@ -29,7 +32,7 @@ class DealAdapter : RecyclerView.Adapter<DealAdapter.DealViewHolder>() {
 //        context!!.applicationContext
         childEventListener = databaseReference!!.addChildEventListener(object : ChildEventListener{
             override fun onChildChanged(p0: DataSnapshot, p1: String?) {
-                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                Log.d("CHANGE", "A new file was added")
             }
 
             override fun onChildAdded(dataSnapshot: DataSnapshot, p1: String?) {
@@ -55,12 +58,12 @@ class DealAdapter : RecyclerView.Adapter<DealAdapter.DealViewHolder>() {
             }
 
             override fun onCancelled(dbError: DatabaseError) {
-                Log.d("SignInError", "Database connection cancelled: " + dbError.message)
+                Log.d("SignInError", "Database connection cancelled: $className " + dbError.message)
 //                Toast.makeText(context!!.applicationContext, dbError.message, Toast.LENGTH_LONG).show()
             }
 
             override fun onChildMoved(p0: DataSnapshot, p1: String?) {
-                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                Log.d("MOVED", "The file was moved: $className")
             }
         })
     }
