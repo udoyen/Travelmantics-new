@@ -2,6 +2,7 @@ package com.connect.systems.ng.travelmantics_new
 
 import android.app.Activity
 import android.content.Intent
+import android.content.Intent.ACTION_GET_CONTENT
 import android.content.res.Resources
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
@@ -17,12 +18,21 @@ import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.UploadTask
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_deal.*
+import java.io.File
 import java.lang.Exception
+import java.nio.file.CopyOption
+import java.security.SecureRandom
 
 class DealActivity : AppCompatActivity() {
 
     companion object {
         const val PICTURE_RESULT: Int = 42
+        private val CHAR_LOWER : String = "abcdefghijklmnopqrstuvwxyz"
+        private val CHAR_UPPER : String = CHAR_LOWER.toUpperCase()
+        private val NUMBER : String = "0123456789"
+        private val DATA_FOR_RANDOM_STRING : String = CHAR_LOWER + CHAR_UPPER + NUMBER
+        private val random = SecureRandom()
+
     }
 
     // get the database reference
@@ -55,6 +65,11 @@ class DealActivity : AppCompatActivity() {
 
         btnImage.setOnClickListener {
             val intent = Intent()
+            // Another way to use intent in kotlin
+//            val i = Intent(Intent.ACTION_GET_CONTENT).apply {
+//                type = "image/*"
+//                putExtra(Intent.EXTRA_LOCAL_ONLY, true)
+//            }
             intent.action = Intent.ACTION_GET_CONTENT
             // set the intent type
             intent.type = "image/jpeg"
@@ -72,7 +87,7 @@ class DealActivity : AppCompatActivity() {
             if (data != null) {
 
                 val imageUri: Uri = data.data!!
-                val ref: StorageReference = FirebaseUtil.storageRef!!.child(imageUri.lastPathSegment!!)
+                val ref: StorageReference = FirebaseUtil.storageRef!!.child(imageUri.lastPathSegment!!.plus(generateRandomString(5)))
                 val uploadTask: UploadTask = ref.putFile(imageUri)
                 uploadTask.addOnSuccessListener { taskSnapshot ->
                     ref.downloadUrl.addOnSuccessListener { uri ->
@@ -97,6 +112,33 @@ class DealActivity : AppCompatActivity() {
 
         }
     }
+
+
+    /**
+     * Function to generate unique
+     * string to use and create
+     * unique names for uploaded images
+     *
+     */
+    private fun generateRandomString(length: Int): String {
+        if (length < 1) throw IllegalArgumentException()
+
+        val sb = StringBuilder(length)
+        for (i in 0 until length) {
+
+            // 0-62 (exclusive), random returns 0-61
+            val rndCharAt : Int = random.nextInt(DATA_FOR_RANDOM_STRING.length)
+            val rndChar : Char = DATA_FOR_RANDOM_STRING.elementAt(rndCharAt)
+
+            sb.append(rndChar)
+
+        }
+
+        return sb.toString()
+
+    }
+
+
 
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -218,3 +260,6 @@ class DealActivity : AppCompatActivity() {
         finish()
     }
 }
+
+
+
