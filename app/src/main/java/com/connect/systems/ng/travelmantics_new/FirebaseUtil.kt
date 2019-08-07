@@ -45,19 +45,16 @@ class FirebaseUtil private constructor(){
 
         fun attachListener(callerActivity: ListActivity) {
             // TODO change this to lamda expression
-            firebaseAuth!!.addAuthStateListener(object : AuthStateListener {
-                override fun onAuthStateChanged(firebaseAuth: FirebaseAuth) {
-                    if (firebaseAuth.currentUser == null) {
-                        signin(callerActivity)
+            firebaseAuth!!.addAuthStateListener { firebaseAuth ->
+                if (firebaseAuth.currentUser == null) {
+                    signin(callerActivity)
 
-                    } else {
-                        val userId: String = firebaseAuth.uid.toString()
-                        checkAdmin(userId, callerActivity)
-                    }
-                    Toast.makeText(callerActivity.baseContext, "Welcome Back", Toast.LENGTH_LONG).show()
-
+                } else {
+                    val userId: String = firebaseAuth.uid.toString()
+                    checkAdmin(userId, callerActivity)
                 }
-            })
+                Toast.makeText(callerActivity.baseContext, "Welcome Back", Toast.LENGTH_LONG).show()
+            }
         }
 
         private fun checkAdmin(userId: String, activity: ListActivity) {

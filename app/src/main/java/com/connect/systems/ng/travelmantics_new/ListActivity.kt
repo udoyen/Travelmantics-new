@@ -7,9 +7,8 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.firebase.ui.auth.AuthUI
 import kotlinx.android.synthetic.main.activity_list.*
-
+import com.firebase.ui.auth.AuthUI
 
 
 class ListActivity : AppCompatActivity() {
@@ -70,4 +69,3 @@ class ListActivity : AppCompatActivity() {
 
 
 }
-
