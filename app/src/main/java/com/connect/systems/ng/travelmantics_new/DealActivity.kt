@@ -25,14 +25,14 @@ import java.security.SecureRandom
 
 class DealActivity : AppCompatActivity() {
 
+    private val random = SecureRandom()
+
     companion object {
         const val PICTURE_RESULT: Int = 42
-        private val CHAR_LOWER : String = "abcdefghijklmnopqrstuvwxyz"
+        private const val CHAR_LOWER : String = "abcdefghijklmnopqrstuvwxyz"
         private val CHAR_UPPER : String = CHAR_LOWER.toUpperCase()
-        private val NUMBER : String = "0123456789"
+        private const val NUMBER : String = "0123456789"
         private val DATA_FOR_RANDOM_STRING : String = CHAR_LOWER + CHAR_UPPER + NUMBER
-        private val random = SecureRandom()
-
     }
 
     // get the database reference
@@ -87,7 +87,7 @@ class DealActivity : AppCompatActivity() {
             if (data != null) {
 
                 val imageUri: Uri = data.data!!
-                val ref: StorageReference = FirebaseUtil.storageRef!!.child(imageUri.lastPathSegment!!.plus(generateRandomString(5)))
+                val ref: StorageReference = FirebaseUtil.storageRef!!.child(imageUri.lastPathSegment!!.plus(generateRandomString(10)))
                 val uploadTask: UploadTask = ref.putFile(imageUri)
                 uploadTask.addOnSuccessListener { taskSnapshot ->
                     ref.downloadUrl.addOnSuccessListener { uri ->
@@ -227,8 +227,8 @@ class DealActivity : AppCompatActivity() {
             val picRef: StorageReference = FirebaseUtil.storageRef!!.child(deal!!.imageName!!)
             picRef.delete().addOnSuccessListener {
                 Log.d("Delete Image", "Image Successfully Deleted")
-            }.addOnFailureListener { p0 ->
-                Log.d("Delete Image Error", p0.message!!)
+            }.addOnFailureListener { error ->
+                Log.d("Delete Image Error", error.message!!)
             }
         }
     }
